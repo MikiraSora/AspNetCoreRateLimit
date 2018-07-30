@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AspNetCoreRateLimit.Core;
+using AspNetCoreRateLimit.Utils;
 
 namespace AspNetCoreRateLimit
 {
@@ -36,7 +37,7 @@ namespace AspNetCoreRateLimit
             if (policies != null && policies.IpRules != null && policies.IpRules.Any())
             {
                 // search for rules with IP intervals containing client IP
-                var matchPolicies = policies.IpRules.Where(r => _ipParser.ContainsIp(r.Ip, identity.ClientIp)).AsEnumerable();
+                var matchPolicies = policies.IpRules.Where(r => _ipParser.ContainsIp(r.Ip, identity.ClientIp));
                 var rules = new List<RateLimitRule>();
                 foreach (var item in matchPolicies)
                 {
@@ -45,18 +46,23 @@ namespace AspNetCoreRateLimit
 
                 if (_options.EnableEndpointRateLimiting)
                 {
+                    var query_result = EndPortMatcher.Checked(rules, identity);
+
+                    limits.AddRange(query_result);
+                    /*
                     // search for rules with endpoints like "*" and "*:/matching_path"
-                    var pathLimits = rules.Where(l => $"*:{identity.Path}".ToLowerInvariant().Contains(l.Endpoint.ToLowerInvariant())).AsEnumerable();
+                    var pathLimits = rules.Where(l => $"*:{identity.Path}".ToLowerInvariant().Contains(l.Endpoint.ToLowerInvariant()));
                     limits.AddRange(pathLimits);
 
                     // search for rules with endpoints like "matching_verb:/matching_path"
-                    var verbLimits = rules.Where(l => $"{identity.HttpVerb}:{identity.Path}".ToLowerInvariant().Contains(l.Endpoint.ToLowerInvariant())).AsEnumerable();
+                    var verbLimits = rules.Where(l => $"{identity.HttpVerb}:{identity.Path}".ToLowerInvariant().Contains(l.Endpoint.ToLowerInvariant()));
                     limits.AddRange(verbLimits);
+                    */
                 }
                 else
                 {
                     //ignore endpoint rules and search for global rules only
-                    var genericLimits = rules.Where(l => l.Endpoint == "*").AsEnumerable();
+                    var genericLimits = rules.Where(l => l.Endpoint == "*");
                     limits.AddRange(genericLimits);
                 }
             }

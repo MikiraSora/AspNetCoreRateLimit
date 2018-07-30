@@ -34,8 +34,7 @@ namespace AspNetCoreRateLimit.Demo
 
             //configure client rate limiting middleware
             services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
-            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));   
             //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
             var opt = new ClientRateLimitOptions();
@@ -52,7 +51,6 @@ namespace AspNetCoreRateLimit.Demo
             loggerFactory.AddDebug();
 
             app.UseIpRateLimiting();
-            app.UseClientRateLimiting();
 
             app.UseMvc();
         }

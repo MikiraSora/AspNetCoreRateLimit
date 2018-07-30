@@ -6,39 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCoreRateLimit.Demo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     public class ValuesController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("zz")]
+        public IActionResult ZZ()
         {
-            return new string[] { "value1", "value2" };
+            return Content("zz");
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [Route("a/a")]
+        public IActionResult A()
         {
-            return "value";
+            return Content("a");
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [Route("a/b")]
+        public IActionResult B()
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Content("b");
         }
     }
 }

@@ -7,11 +7,22 @@ namespace AspNetCoreRateLimit
 {
     public class IpAddressUtil
     {
+        private static Dictionary<string, IpAddressRange> rule_cache = new Dictionary<string, IpAddressRange>();
+
+        private static IpAddressRange GetIpAddressRange(string rule)
+        {
+            if (rule_cache.TryGetValue(rule, out var addressRange))
+                return addressRange;
+
+            rule_cache[rule] = new IpAddressRange(rule);
+            return rule_cache[rule];
+        }
+
         public static bool ContainsIp(string rule, string clientIp)
         {
             var ip = ParseIp(clientIp);
 
-            var range = new IpAddressRange(rule);
+            var range = GetIpAddressRange(rule);
             if (range.Contains(ip))
             {
                 return true;
@@ -27,7 +38,7 @@ namespace AspNetCoreRateLimit
             {
                 foreach (var rule in ipRules)
                 {
-                    var range = new IpAddressRange(rule);
+                    var range = GetIpAddressRange(rule);
                     if (range.Contains(ip))
                     {
                         return true;
@@ -46,7 +57,7 @@ namespace AspNetCoreRateLimit
             {
                 foreach (var r in ipRules)
                 {
-                    var range = new IpAddressRange(r);
+                    var range = GetIpAddressRange(r);
                     if (range.Contains(ip))
                     {
                         rule = r;

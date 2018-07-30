@@ -8,12 +8,5 @@ namespace AspNetCoreRateLimit
         {
             return builder.UseMiddleware<IpRateLimitMiddleware>();
         }
-
-        public static IApplicationBuilder UseClientRateLimiting(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<ClientRateLimitMiddleware>();
-        }
-
-       
     }
 }
